@@ -12,3 +12,6 @@ The phone book entry is stored in a relational database (MySQL).
 Information between the client and server parts of the application is transmitted through ajax requests. 
 Updating information in the table is implemented without refreshing the page. 
 The entire client interface is implemented on the principle of "single-page application".
+
+By pressing individual buttons on the user interface in all phone book entries modified by some DB field (name).
+After processing, the user is notified that asynchronous post processing is being used.
