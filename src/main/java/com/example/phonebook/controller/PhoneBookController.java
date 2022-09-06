@@ -59,4 +59,15 @@ public class PhoneBookController {
 
         return new ResponseEntity<>(phoneBook.getId(), HttpStatus.OK);
     }
+
+    @PostMapping("/edit/all/records")
+    public ResponseEntity<String> editAllRecord(@RequestParam String name) {
+        List<PhoneBook> phoneBooks = iPhoneBookRepository.findAll();
+        for (var ph:phoneBooks) {
+            ph.setName(name);
+            iPhoneBookRepository.save(ph);
+        }
+
+        return new ResponseEntity<>("Async call is done!", HttpStatus.OK);
+    }
 }

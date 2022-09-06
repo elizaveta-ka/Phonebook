@@ -35,6 +35,8 @@
             </td>
         </tr>
             <button class="add">Add</button>
+            <button class="asyncButton">BUTTON</button>
+            <input type="text" value="message" class="callback" th:id="call"/>
     </div>
 </table>
 </body>
@@ -46,6 +48,7 @@
             deleteRecords();
             addRecords();
             cancel();
+            asyncRequest();
         });
 
     function deleteRecords() {
@@ -121,6 +124,32 @@
             var phone = document.getElementById("phone" + id).getAttribute("value");
             document.getElementById("name" + id).value = name;
             document.getElementById("phone" + id).value = phone;
+        });
+    }
+
+    function asyncRequest() {
+        $(".asyncButton").bind("click", function (e) {
+            e.preventDefault();
+            var newName = "Jerry";
+
+            //to check async call
+            var millisecondsToWait = 5000;
+            setTimeout(function() {
+                $.ajax({
+                    url: "/edit/all/records",
+                    type: "POST",
+                    data: {name: newName},
+                    dataType: "html",
+                    success: function (response) {
+                        document.getElementById("call").setAttribute("value", response);
+                        for (var i = 0; i < document.getElementsByClassName("name").length; i++) {
+                            document.getElementsByClassName("name").item(i).setAttribute("value", newName);
+                        }
+                        alert(response);
+                    }
+                });
+                }, millisecondsToWait);
+
         });
     }
 </script>
