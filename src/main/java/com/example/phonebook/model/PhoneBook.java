@@ -1,7 +1,5 @@
 package com.example.phonebook.model;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
