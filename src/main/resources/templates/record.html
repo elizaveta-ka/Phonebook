@@ -18,9 +18,11 @@
     </tr>
     <div id="ourForm">
         <tr th:each="p : ${phoneBookList}" class="phoneBookForm" th:id="person + ${{p.id}}">
-            <td><input type="text" th:value="${{p.name}}" placeholder="Name" class="name" th:id="name + ${{p.id}}"/>
+            <td>
+                <input type="text" th:value="${{p.name}}" placeholder="Name" class="name" th:id="name + ${{p.id}}"/>
             </td>
-            <td><input type="text" th:value="${{p.phone}}" placeholder="Phone Number" class="phone"
+            <td>
+                <input type="text" th:value="${{p.phone}}" placeholder="Phone Number" class="phone"
                        th:id="phone + ${{p.id}}"/>
             </td>
             <td th:text="${{p.date}}" th:id="date + ${{p.id}}">date</td>
@@ -76,8 +78,7 @@
                 data: {id: id, name: name, phone: phone},
                 dataType: "html",
                 success: function (response) {
-                    console.log(response)
-                    document.getElementById("date" + id).innerText = new Date().toLocaleDateString();
+                    document.getElementById("date" + id).innerText = response;
                 }
             });
         });

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -24,14 +24,9 @@ public class PhoneBookController {
 
     @GetMapping("/phonebook")
     public String showRecords(Model model) {
-        List<PhoneBook> phoneBookList = iPhoneBookRepository.findAll();
-        List<PhoneBook> phoneBooks = new ArrayList<>();
-        for (var v:phoneBookList) {
-            if(!v.isDeleted()) {
-                phoneBooks.add(v);
-            }
-        }
-        model.addAttribute("phoneBookList", phoneBooks);
+        List<PhoneBook> phoneBookList = iPhoneBookRepository.findRecords();
+        model.addAttribute("phoneBookList", phoneBookList);
+
         return "record";
     }
 
@@ -40,23 +35,28 @@ public class PhoneBookController {
         PhoneBook phoneBook = iPhoneBookRepository.getById(id);
         phoneBook.setDeleted(true);
         iPhoneBookRepository.save(phoneBook);
+
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
     @PostMapping("/edit/record")
-    public ResponseEntity<LocalDate> editRecord(@RequestParam String name, String phone, Long id) {
+    public ResponseEntity<String> editRecord(@RequestParam String name, String phone, Long id) {
         PhoneBook phoneBook = iPhoneBookRepository.getReferenceById(id);
         phoneBook.setPhone(phone);
         phoneBook.setName(name);
         phoneBook.setDate(LocalDate.now());
         iPhoneBookRepository.save(phoneBook);
-        return new ResponseEntity<>(phoneBook.getDate(), HttpStatus.OK);
+        LocalDate localDate = phoneBook.getDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        return new ResponseEntity<>(localDate.format(formatter), HttpStatus.OK);
     }
 
     @GetMapping("/add/record")
     public ResponseEntity<Long> addRecord() {
         PhoneBook phoneBook = new PhoneBook();
         iPhoneBookRepository.save(phoneBook);
+
         return new ResponseEntity<>(phoneBook.getId(), HttpStatus.OK);
     }
 }
