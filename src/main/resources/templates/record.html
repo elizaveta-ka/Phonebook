@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phonebook</title>
+</head>
+<body>
+<div id="response"></div>
+<table border="1" id="tableId" class="table">
+    <caption>PhoneBook</caption>
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Date</th>
+        <th>
+            <button class="add">Add</button>
+        </th>
+    </tr>
+    <div id="ourForm">
+        <tr th:each="p : ${phoneBookList}" class="phoneBookForm" th:id="person + ${{p.id}}">
+            <td><input type="text" th:value="${{p.name}}" placeholder="Name" class="name" th:id="name + ${{p.id}}"/>
+            </td>
+            <td><input type="text" th:value="${{p.phone}}" placeholder="Phone Number" class="phone"
+                       th:id="phone + ${{p.id}}"/>
+            </td>
+            <td th:text="${{p.date}}" th:id="date + ${{p.id}}">date</td>
+            <td>
+                <button class="okButton" th:id="${{p.id}}">OK</button>
+            </td>
+            <td>
+                <button class="delete" th:id="${{p.id}}">Delete</button>
+            </td>
+            <td>
+                <button class="cancel" th:id="${{p.id}}">Cancel</button>
+            </td>
+        </tr>
+    </div>
+</table>
+</body>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            editRecords();
+            deleteRecords();
+            addRecords();
+            cancel();
+        });
+
+    function deleteRecords() {
+        $(".delete").bind("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/delete/record",
+                type: "POST",
+                data: ({id: $(this).attr("id")}),
+                dataType: "html",
+                success: removeRow($(this).attr("id"))
+            });
+        });
+    }
+
+    function removeRow(id) {
+        document.getElementById("person" + id).remove();
+    }
+
+    function editRecords() {
+        $(".okButton").bind("click", function (e) {
+            e.preventDefault();
+            var id = $(this).attr("id");
+            var name = document.getElementById("name" + id).value;
+            var phone = document.getElementById("phone" + id).value;
+            $.ajax({
+                url: "/edit/record",
+                type: "POST",
+                data: {id: id, name: name, phone: phone},
+                dataType: "html",
+                success: function (response) {
+                    console.log(response)
+                    document.getElementById("date" + id).innerText = new Date().toLocaleDateString();
+                }
+            });
+        });
+    }
+
+    function addRecords() {
+        $(".add").bind("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/add/record",
+                type: "GET",
+                dataType: "html",
+                success: function (response) {
+                    var subStringIdAddRecordClass = "person";
+                    var newIdRecordSelectContainer = subStringIdAddRecordClass + response;
+                    var cloneClass = $(".phoneBookForm:last-child").clone(true, true);
+                    cloneClass.attr("id", newIdRecordSelectContainer);
+                    var newIdName = "name" + response;
+                    var newIdPhone = "phone" + response;
+                    var newIdDate = "date" + response;
+                    cloneClass.children().children()[0].setAttribute("id", newIdName);
+                    cloneClass.children().children()[0].value = "";
+                    cloneClass.children().children()[1].setAttribute("id", newIdPhone);
+                    cloneClass.children().children()[1].value = "";
+                    cloneClass.children()[2].setAttribute("id", newIdDate);
+                    cloneClass.children()[2].textContent = "";
+                    cloneClass.children().children()[2].setAttribute("id", response);
+                    cloneClass.children().children()[3].setAttribute("id", response);
+                    cloneClass.children().children()[4].setAttribute("id", response);
+                    $(".phoneBookForm").parent().append(cloneClass);
+                }
+            });
+        });
+    }
+
+    function cancel() {
+        $(".cancel").bind("click", function (e) {
+            e.preventDefault();
+            var id = $(this).attr("id");
+            var name = document.getElementById("name" + id).getAttribute("value");
+            var phone = document.getElementById("phone" + id).getAttribute("value");
+            document.getElementById("name" + id).value = name;
+            document.getElementById("phone" + id).value = phone;
+        });
+    }
+</script>
+</html>
