@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Phonebook</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" href="../../../static/style.css"/>
 </head>
 <body>
 <div id="response"></div>
@@ -12,9 +13,6 @@
         <th>Name</th>
         <th>Phone</th>
         <th>Date</th>
-        <th>
-            <button class="add">Add</button>
-        </th>
     </tr>
     <div id="ourForm">
         <tr th:each="p : ${phoneBookList}" class="phoneBookForm" th:id="person + ${{p.id}}">
@@ -36,6 +34,7 @@
                 <button class="cancel" th:id="${{p.id}}">Cancel</button>
             </td>
         </tr>
+            <button class="add">Add</button>
     </div>
 </table>
 </body>
